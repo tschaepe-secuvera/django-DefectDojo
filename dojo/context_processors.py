@@ -2,6 +2,7 @@
 from django.conf import settings
 from dojo.models import Alerts, UserAnnouncement, System_Settings
 
+
 def globalize_vars(request):
     # return the value you want as a dictionnary. you may add multiple values in there.
     return {'SHOW_LOGIN_FORM': settings.SHOW_LOGIN_FORM,
