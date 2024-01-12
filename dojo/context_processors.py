@@ -1,6 +1,6 @@
 # import the settings file
 from django.conf import settings
-
+from dojo.models import Alerts, UserAnnouncement, System_Settings
 
 def globalize_vars(request):
     # return the value you want as a dictionnary. you may add multiple values in there.
@@ -28,24 +28,24 @@ def globalize_vars(request):
 
 
 def bind_system_settings(request):
-    from dojo.models import System_Settings
     return {'system_settings': System_Settings.objects.get()}
 
 
 def bind_alert_count(request):
-    if not settings.DISABLE_ALERT_COUNTER:
-        from dojo.models import Alerts
-        if request.user.is_authenticated:
+    try:
+        if not settings.DISABLE_ALERT_COUNTER and request.user.is_authenticated:
             return {'alert_count': Alerts.objects.filter(user_id=request.user).count()}
-    return {}
+    except Exception:
+        pass
+    finally:
+        return {}
 
 
 def bind_announcement(request):
-    from dojo.models import UserAnnouncement
     try:
         if request.user.is_authenticated:
-            user_announcement = UserAnnouncement.objects.select_related('announcement').get(user=request.user)
-            return {'announcement': user_announcement.announcement}
-        return {}
+            return {'announcement': UserAnnouncement.objects.select_related('announcement').get(user=request.user)}
     except Exception:
+        pass
+    finally:
         return {}
